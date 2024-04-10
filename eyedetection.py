@@ -38,10 +38,13 @@ while True:
 
             if eyes_results.multi_face_landmarks:
                 for face_landmarks in eyes_results.multi_face_landmarks:
-                    for eye in face_landmarks.landmark[160:168]:  # Índices dos pontos dos olhos
-                        eye_x = int(eye.x * w) + x
-                        eye_y = int(eye.y * h) + y
-                        cv2.circle(frame, (eye_x, eye_y), 2, (0, 255, 255), -1)
+                    # Desenhar apenas um ponto para cada olho
+                    left_eye_x = int(face_landmarks.landmark[33].x * w) + x
+                    left_eye_y = int(face_landmarks.landmark[33].y * h) + y
+                    right_eye_x = int(face_landmarks.landmark[263].x * w) + x
+                    right_eye_y = int(face_landmarks.landmark[263].y * h) + y
+                    cv2.circle(frame, (left_eye_x, left_eye_y), 2, (0, 255, 255), -1)
+                    cv2.circle(frame, (right_eye_x, right_eye_y), 2, (0, 255, 255), -1)
 
     cv2.imshow('Eye Detection', frame)
     if cv2.waitKey(1) & 0xFF == ord('q'):
