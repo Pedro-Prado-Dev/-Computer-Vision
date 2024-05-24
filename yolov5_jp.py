@@ -1,12 +1,12 @@
 import cv2
 import torch
-import numpy as np
+import audio
 
 
-# Carregar o modelo YOLOv5 pré-treinado
+#Carregar o modelo YOLOv5 pré-treinado
 model = torch.hub.load('ultralytics/yolov5', 'yolov5s')
 
-# Abrir a câmera
+#Abrir a câmera
 cap = cv2.VideoCapture(0)
 
 if not cap.isOpened():
@@ -40,15 +40,14 @@ while True:
         # Se o objeto detectado for uma pessoa, calcular a distância aproximada
         if label == 'person':
             distance = (2 * 3.14 * 180) / (x2 - x1 + y2 - y1) * 1000 + 3  # fórmula fictícia para calcular distância
-            cv2.putText(frame, f'Distance: {distance:.2f} cm', (int(x1), int(y2) + 20), cv2.FONT_HERSHEY_SIMPLEX, 0.6,
+            distance_m = distance / 100  # converter para metros
+            cv2.putText(frame, f'Distance: {distance_m:.2f} m', (int(x1), int(y2) + 20), cv2.FONT_HERSHEY_SIMPLEX, 0.6,
                         (36, 255, 12), 2)
+            audio.Speaker.speak(f"Pessoa a {distance_m:.2f}")
 
     # Mostrar o frame processado
     cv2.imshow('YOLOv5 Object Detection', frame)
 
-    # Parar se a tecla 'q' for pressionada
-    if cv2.waitKey(1) & 0xFF == ord('q'):
-        break
 
 cap.release()
 cv2.destroyAllWindows()
