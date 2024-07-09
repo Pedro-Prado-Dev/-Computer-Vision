@@ -1,0 +1,32 @@
+on:
+  push:
+    tags: ["*"]
+
+jobs: 
+    linting:
+        name: "Clonning repository"
+        runs-on: ${{ matrix.os }}
+        strategy:
+            matrix:
+                os: [ubuntu-latest]
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v3
+            
+            - name: Setup Python
+              uses: actions/setup-python@v4
+              with:
+                python-version: '3.12.4'
+            
+            - name: Setup Poetry
+              run: pip install poetry
+            
+            - name: Install Project Dependencies
+              run: poetry install
+              
+            - name: Run Linting
+              uses: wearerequired/lint-action@v2
+              with:
+                black: true
+                flake8: true
+                isort: true
