@@ -68,7 +68,7 @@ class Recognition:
             text.thickness
         )
 
-    def main_loop(self):
+    def run(self):
         last_time_spoken = time.time() - 2
 
         while True:
