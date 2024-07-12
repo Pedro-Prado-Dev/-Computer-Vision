@@ -1,0 +1,51 @@
+[tool.poetry]
+name = "computer-vision"
+version = "0.1.0"
+description = ""
+authors = ["Your Name <you@example.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+opencv-python = "^4.10.0.84"
+mediapipe = "^0.10.14"
+pyyaml = "^6.0.1"
+torch = "^2.3.1"
+requests = "^2.32.3"
+pandas = "^2.2.2"
+
+
+[tool.poetry.group.dev.dependencies]
+flake8 = "^7.1.0"
+black = "^24.4.2"
+isort = "^5.13.2"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 80
+target-version = ["py312"]
+exclude = '''
+/(
+  \.git
+ | \.hg
+ | \.mypy_cache
+ | \.tox
+ | venv
+ | _build
+ | buck-out
+ | build
+ | \.flake8
+ )/
+'''
+
+[tool.isort]
+profile = "black"
+line_length = 80
+
+[tool.taskipy.tasks]
+lint = "black --check --diff . && isort --check --diff ."
+format = "echo \"Formmating with black\" && black . && echo \"Formmating with isort\" && isort ."
+run = "python main.py"
