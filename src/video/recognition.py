@@ -72,8 +72,8 @@ class Recognition:
         last_time_spoken = time.time() - 2
 
         while True:
-            ret, frame = self._get_video_frame()
-            if not ret:
+            has_could_take_screenshot, frame = self._get_video_frame()
+            if not has_could_take_screenshot:
                 raise ScreenshotNotTokeException('Error while getting video frame')
 
             rgb_image = FrameUtils.bgr2rgb(frame)
