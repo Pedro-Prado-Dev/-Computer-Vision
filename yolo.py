@@ -1,8 +1,8 @@
 import cv2
 import torch
-import numpy as np
 import pyttsx3
 import time
+import threading
 
 # Carregar o modelo YOLOv5 pré-treinado
 model = torch.hub.load('ultralytics/yolov5', 'yolov5s')
@@ -22,6 +22,12 @@ voices = engine.getProperty('voices')
 engine.setProperty('voice', voices[1].id)  # Seleciona uma voz feminina
 
 last_spoken_time = time.time() - 2  # Inicializa com um tempo passado para falar imediatamente
+lock = threading.Lock()
+
+def speak_text(text):
+    with lock:
+        engine.say(text)
+        engine.runAndWait()
 
 while True:
     ret, frame = cap.read()
@@ -59,8 +65,7 @@ while True:
                 current_time = time.time()
                 if current_time - last_spoken_time >= 2:
                     # Converter a distância para texto e falar
-                    engine.say(f'Distance to person is {distance:.2f} meters')
-                    engine.runAndWait()
+                    threading.Thread(target=speak_text, args=(f'Distance to person is {distance:.2f} meters',)).start()
                     last_spoken_time = current_time  # Atualiza o tempo do último aviso sonoro
 
         # Desenhar a caixa delimitadora
