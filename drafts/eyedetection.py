@@ -7,7 +7,9 @@ face_detection = mp_face_detection.FaceDetection()
 
 # Inicializar o detector de olhos do MediaPipe
 mp_eye_detection = mp.solutions.face_mesh
-eye_detection = mp_eye_detection.FaceMesh(static_image_mode=True, max_num_faces=1, min_detection_confidence=0.5)
+eye_detection = mp_eye_detection.FaceMesh(
+    static_image_mode=True, max_num_faces=1, min_detection_confidence=0.5
+)
 
 # Inicializar a webcam
 cap = cv2.VideoCapture(0)
@@ -27,11 +29,16 @@ while True:
         for detection in results.detections:
             bboxC = detection.location_data.relative_bounding_box
             ih, iw, _ = frame.shape
-            x, y, w, h = int(bboxC.xmin * iw), int(bboxC.ymin * ih), int(bboxC.width * iw), int(bboxC.height * ih)
+            x, y, w, h = (
+                int(bboxC.xmin * iw),
+                int(bboxC.ymin * ih),
+                int(bboxC.width * iw),
+                int(bboxC.height * ih),
+            )
             cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
 
             # Converter para RGB para o MediaPipe
-            rgb_face = frame[y:y+h, x:x+w]
+            rgb_face = frame[y : y + h, x : x + w]
 
             # Detectar olhos na imagem
             eyes_results = eye_detection.process(rgb_face)
@@ -43,11 +50,15 @@ while True:
                     left_eye_y = int(face_landmarks.landmark[33].y * h) + y
                     right_eye_x = int(face_landmarks.landmark[263].x * w) + x
                     right_eye_y = int(face_landmarks.landmark[263].y * h) + y
-                    cv2.circle(frame, (left_eye_x, left_eye_y), 2, (0, 255, 255), -1)
-                    cv2.circle(frame, (right_eye_x, right_eye_y), 2, (0, 255, 255), -1)
+                    cv2.circle(
+                        frame, (left_eye_x, left_eye_y), 2, (0, 255, 255), -1
+                    )
+                    cv2.circle(
+                        frame, (right_eye_x, right_eye_y), 2, (0, 255, 255), -1
+                    )
 
-    cv2.imshow('Eye Detection', frame)
-    if cv2.waitKey(1) & 0xFF == ord('q'):
+    cv2.imshow("Eye Detection", frame)
+    if cv2.waitKey(1) & 0xFF == ord("q"):
         break
 
 cap.release()

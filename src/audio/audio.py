@@ -1,12 +1,11 @@
 import threading
-
 from abc import ABC
+
 import pyttsx3
 
-
 ENGINE = pyttsx3.init()
-voices = ENGINE.getProperty('voices')
-ENGINE.setProperty('voice', voices[1].id)
+voices = ENGINE.getProperty("voices")
+ENGINE.setProperty("voice", voices[1].id)
 
 
 class Speaker(ABC):

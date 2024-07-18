@@ -22,8 +22,8 @@ while True:
                 y = int(hand_landmarks.landmark[i].y * frame.shape[0])
                 cv2.circle(frame, (x, y), 5, (255, 0, 0), -1)
 
-    cv2.imshow('Hand Detection', frame)
-    if cv2.waitKey(1) & 0xFF == ord('q'):
+    cv2.imshow("Hand Detection", frame)
+    if cv2.waitKey(1) & 0xFF == ord("q"):
         break
 
 cap.release()

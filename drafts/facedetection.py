@@ -12,7 +12,7 @@ while True:
         break
 
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-    rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)  
+    rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
     results = face_detection.process(rgb)
 
@@ -20,11 +20,16 @@ while True:
         for detection in results.detections:
             bboxC = detection.location_data.relative_bounding_box
             ih, iw, _ = frame.shape
-            x, y, w, h = int(bboxC.xmin * iw), int(bboxC.ymin * ih), int(bboxC.width * iw), int(bboxC.height * ih)
+            x, y, w, h = (
+                int(bboxC.xmin * iw),
+                int(bboxC.ymin * ih),
+                int(bboxC.width * iw),
+                int(bboxC.height * ih),
+            )
             cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
 
-    cv2.imshow('Face Detection', frame)
-    if cv2.waitKey(1) & 0xFF == ord('q'):
+    cv2.imshow("Face Detection", frame)
+    if cv2.waitKey(1) & 0xFF == ord("q"):
         break
 
 cap.release()

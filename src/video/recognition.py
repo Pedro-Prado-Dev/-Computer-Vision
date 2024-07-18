@@ -2,14 +2,17 @@ import dataclasses
 import time
 
 import cv2
-import torch
 import numpy as np
+import torch
 
-from src.typing.draw import Border, Text
-from src.video.exceptions import VideoIsNotRecognizedException, ScreenshotNotTokeException
-from src.video.utils.frame import FrameUtils
-from src.audio.audio import Speaker
-from src.typing.points import Point
+from audio.audio import Speaker
+from typings.draw import Border, Text
+from typings.points import Point
+from video.exceptions import (
+    ScreenshotNotTokeException,
+    VideoIsNotRecognizedException,
+)
+from video.utils.frame import FrameUtils
 
 
 @dataclasses.dataclass
@@ -25,7 +28,7 @@ class Recognition:
     def __init__(self, spoke_immediately: bool = False):
         self._spoke_immediately = spoke_immediately
 
-        self.model = torch.hub.load('ultralytics/yolov5', 'yolov5s')
+        self.model = torch.hub.load("ultralytics/yolov5", "yolov5s")
         self.video = cv2.VideoCapture(0)
 
         self.__available_distances_intervals_to_speak = [
@@ -34,18 +37,18 @@ class Recognition:
         ]
 
         if not self.video.isOpened():
-            raise VideoIsNotRecognizedException('Video not opened')
+            raise VideoIsNotRecognizedException("Video not opened")
 
     def _get_video_frame(self) -> tuple[bool, cv2.typing.MatLike]:
         return self.video.read()
 
     @staticmethod
     def _show_processed_frame(frame: cv2.typing.MatLike):
-        cv2.imshow('YOLOv5 Object Detection', frame)
+        cv2.imshow("YOLOv5 Object Detection", frame)
 
     @staticmethod
     def _can_stop_process():
-        return cv2.waitKey(1) & 0xFF == ord('q')
+        return cv2.waitKey(1) & 0xFF == ord("q")
 
     @staticmethod
     def _draw_boxes(
@@ -53,9 +56,11 @@ class Recognition:
         text_to_show: str,
         points: list[Point],
         border: Border = Border(color=(0, 255, 0), thickness=2),
-        text: Text = Text(color=(36, 255, 12), thickness=2, scale=0.9)
+        text: Text = Text(color=(36, 255, 12), thickness=2, scale=0.9),
     ) -> None:
-        cv2.rectangle(frame, points[0], points[1], border.color, border.thickness)
+        cv2.rectangle(
+            frame, points[0], points[1], border.color, border.thickness
+        )
 
         text_points = (points[0][0], points[0][1] - 10)
         cv2.putText(
@@ -65,7 +70,7 @@ class Recognition:
             cv2.FONT_HERSHEY_SIMPLEX,
             text.scale,
             text.color,
-            text.thickness
+            text.thickness,
         )
 
     def run(self):
@@ -74,7 +79,9 @@ class Recognition:
         while True:
             has_could_take_screenshot, frame = self._get_video_frame()
             if not has_could_take_screenshot:
-                raise ScreenshotNotTokeException('Error while getting video frame')
+                raise ScreenshotNotTokeException(
+                    "Error while getting video frame"
+                )
 
             rgb_image = FrameUtils.bgr2rgb(frame)
             results = self.model(rgb_image)
@@ -88,14 +95,16 @@ class Recognition:
                 label = labels[int(cls)]
 
                 distance_of_object = 650 / (x2 - x1 + y2 - y1)
-                distance_of_object_text = f"Distance: {distance_of_object:.2f} meters"
+                distance_of_object_text = (
+                    f"Distance: {distance_of_object:.2f} meters"
+                )
 
                 if label == "person":
                     has_person_detected = True
 
                 isin_any_interval = [
-                    distance.isin(distance_of_object) for distance in
-                    self.__available_distances_intervals_to_speak
+                    distance.isin(distance_of_object)
+                    for distance in self.__available_distances_intervals_to_speak
                 ]
 
                 if any(isin_any_interval):
@@ -111,7 +120,7 @@ class Recognition:
                             int(point[0]),
                             int(point[1]),
                         ),
-                        [(x1, y1), (x2, y2)]
+                        [(x1, y1), (x2, y2)],
                     )
                 )
 

@@ -15,6 +15,8 @@ requests = "^2.32.3"
 pandas = "^2.2.2"
 pyttsx3 = "^2.90"
 numpy = "^2.0.0"
+torchvision = "^0.18.1"
+torchaudio = "^2.3.1"
 
 
 [tool.poetry.group.dev.dependencies]
@@ -50,4 +52,4 @@ line_length = 80
 [tool.taskipy.tasks]
 lint = "black --check --diff . && isort --check --diff ."
 format = "echo \"Formmating with black\" && black . && echo \"Formmating with isort\" && isort ."
-run = "python main.py"
+run = "python ./src/main.py"
