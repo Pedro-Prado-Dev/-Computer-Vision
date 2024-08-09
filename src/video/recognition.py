@@ -5,11 +5,11 @@ import cv2
 import torch
 import numpy as np
 
-from src.typing.draw import Border, Text
-from src.video.exceptions import VideoIsNotRecognizedException, ScreenshotNotTokeException
-from src.video.utils.frame import FrameUtils
-from src.audio.audio import Speaker
-from src.typing.points import Point
+from typings.draw import Border, Text
+from video.exceptions import VideoIsNotRecognizedException, ScreenshotNotTokeException
+from video.utils.frame import FrameUtils
+from audio.audio import Speaker
+from typings.points import Point
 
 
 @dataclasses.dataclass
@@ -32,6 +32,8 @@ class Recognition:
             DistanceInterval(1, 3),
             DistanceInterval(6, 8),
         ]
+
+        self.speaker = Speaker()
 
         if not self.video.isOpened():
             raise VideoIsNotRecognizedException('Video not opened')
@@ -70,6 +72,7 @@ class Recognition:
 
     def run(self):
         last_time_spoken = time.time() - 2
+        distancia_antiga = -1
 
         while True:
             has_could_take_screenshot, frame = self._get_video_frame()
@@ -83,6 +86,9 @@ class Recognition:
             labels = results.names
 
             has_person_detected = False
+            speak = True
+            new_distance = 0
+
             for box in boxes:
                 x1, y1, x2, y2, conf, cls = box
                 label = labels[int(cls)]
@@ -93,17 +99,16 @@ class Recognition:
                 if label == "person":
                     has_person_detected = True
 
-                isin_any_interval = [
-                    distance.isin(distance_of_object) for distance in
-                    self.__available_distances_intervals_to_speak
-                ]
-
-                if any(isin_any_interval):
+                print(distance_of_object)
+                    
+                if distance_of_object and abs(distancia_antiga - distance_of_object) > 0.5 and has_person_detected:
                     current_time = time.time()
                     current_time_spoken = current_time - last_time_spoken
                     if current_time_spoken >= 2:
-                        Speaker.speak(distance_of_object_text)
+                        print("Data")
+                        self.speaker.speak(distance_of_object_text)
                         last_time_spoken = current_time_spoken
+                        distancia_antiga = distance_of_object
 
                 points_to_draw = list(
                     map(

@@ -1,22 +1,32 @@
 import threading
+from multiprocessing.dummy import Pool as ThreadPool
 
-from abc import ABC
 import pyttsx3
 
 
-ENGINE = pyttsx3.init()
-voices = ENGINE.getProperty('voices')
-ENGINE.setProperty('voice', voices[1].id)
+class Speaker:
+    def __init__(self) -> None:
+        self.ENGINE = pyttsx3.init()
+        self.voices = self.ENGINE.getProperty('voices')
+        self.ENGINE.setProperty('voice', self.voices[1].id)
+        # self.thread_id = threading.Thread(target=lambda: self._speak(text))
+        # self.thread_id.start()
 
+        self.pool = ThreadPool(1)
 
-class Speaker(ABC):
-    @staticmethod
-    def _speak(text: str):
+    def _speak(self, text: str):
         lock = threading.Lock()
         with lock:
-            ENGINE.say(text)
-            ENGINE.runAndWait()
+            self.ENGINE.say(text)
+            self.ENGINE.runAndWait()
 
-    @staticmethod
-    def speak(text):
-        threading.Thread(target=Speaker._speak, args=text).start()
+    def speak(self, text):
+        try:
+            self.pool.apply_async(lambda: self._speak(text), ())
+            self.pool.close()
+
+            self.pool = ThreadPool(1)
+        except Exception as e:
+            print(e)
+            print("LIGEIRINHO E DATA = NONE, START_DATA, OPEN_DATA")
+        

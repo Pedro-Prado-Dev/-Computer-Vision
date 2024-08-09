@@ -1,4 +1,4 @@
-from src.video.recognition import Recognition
+from video.recognition import Recognition
 
 
 if __name__ == '__main__':
