@@ -1,0 +1,12 @@
+opencv-python==4.10.0.84
+mediapipe==0.10.14
+pyyaml==6.0.1
+torch==2.3.1
+requests==2.32.3
+pandas==2.2.2
+pyttsx3==2.90
+numpy==2.0.0
+taskipy==1.13.0
+flake8==7.1.0
+black==24.4.2
+isort==5.13.2
