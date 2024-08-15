@@ -86,7 +86,6 @@ class Recognition:
             boxes = results.xyxy[0].cpu().numpy()
             labels = results.names
 
-            has_person_detected = False
             speak = True
             new_distance = 0
 
@@ -98,32 +97,36 @@ class Recognition:
                 distance_of_object_text = f"Distance: {distance_of_object:.2f} meters"
 
                 if label == "person":
-                    has_person_detected = True
                     
-                if distance_of_object and abs(old_distance - distance_of_object) > 0.5 and has_person_detected:
-                    current_time = time.time()
-                    current_time_spoken = current_time - last_time_spoken
-                    if current_time_spoken >= 2:
-                        self.speaker.speak(distance_of_object_text)
-                        last_time_spoken = current_time_spoken
-                        print(f"OLD DISTANCE = {old_distance:.2f} - {label}")
-                        old_distance = distance_of_object
+                    if distance_of_object and abs(old_distance - distance_of_object) > 0.5:
+                        current_time = time.time()
+                        current_time_spoken = current_time - last_time_spoken
+                        if current_time_spoken >= 2:
+                            self.speaker.speak(distance_of_object_text)
+                            last_time_spoken = current_time_spoken
+                            print(f"OLD DISTANCE = {old_distance:.2f} - {label}")
+                            old_distance = distance_of_object
 
-                        print(f"NEW DISTANCE = {distance_of_object:.2f} - {label}")
-                    has_person_detected = False
-                points_to_draw = list(
-                    map(
-                        lambda point: (
-                            int(point[0]),
-                            int(point[1]),
-                        ),
-                        [(x1, y1), (x2, y2)]
-                    )
-                )
+                            print(f"NEW DISTANCE = {distance_of_object:.2f} - {label}")
 
-                self._draw_boxes(frame, str(f"{old_distance:.2f} - {label}"), points_to_draw)
-            if not has_person_detected:
-                last_time_spoken = time.time() - 2
+                    else:
+                        last_time_spoken = time.time() - 2
+
+                        points_to_draw = list(
+                            map(
+                                lambda point: (
+                                    int(point[0]),
+                                    int(point[1]),
+                                ),
+                                [(x1, y1), (x2, y2)]
+                            )
+                        )
+
+                        self._draw_boxes(frame, str(f"{old_distance:.2f} - {label}"), points_to_draw)
+
+
+                else:
+                    last_time_spoken = time.time() - 2
 
             self._show_processed_frame(frame)
             if self._can_stop_process():
