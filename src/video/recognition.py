@@ -1,5 +1,6 @@
 import dataclasses
 import time
+from datetime import datetime
 
 import cv2
 import torch
@@ -98,8 +99,6 @@ class Recognition:
 
                 if label == "person":
                     has_person_detected = True
-
-                print(distance_of_object)
                     
                 if distance_of_object and abs(old_distance - distance_of_object) > 0.5 and has_person_detected:
                     current_time = time.time()
@@ -107,19 +106,22 @@ class Recognition:
                     if current_time_spoken >= 2:
                         self.speaker.speak(distance_of_object_text)
                         last_time_spoken = current_time_spoken
+                        print(f"OLD DISTANCE = {old_distance:.2f} - {label}")
                         old_distance = distance_of_object
+
+                        print(f"NEW DISTANCE = {distance_of_object:.2f} - {label}")
                     has_person_detected = False
-            # points_to_draw = list(
-            #     map(
-            #         lambda point: (
-            #             int(point[0]),
-            #             int(point[1]),
-            #         ),
-            #         [(x1, y1), (x2, y2)]
-            #     )
-            # )
-            #
-            # self._draw_boxes(frame, distance_of_object_text, points_to_draw)
+                points_to_draw = list(
+                    map(
+                        lambda point: (
+                            int(point[0]),
+                            int(point[1]),
+                        ),
+                        [(x1, y1), (x2, y2)]
+                    )
+                )
+
+                self._draw_boxes(frame, str(f"{old_distance:.2f} - {label}"), points_to_draw)
             if not has_person_detected:
                 last_time_spoken = time.time() - 2
 

@@ -19,7 +19,7 @@ class Speaker:
         self.pool = ThreadPool(1)
 
     def _speak(self, text: str):
-        global  enable_speak
+        global enable_speak
 
         enable_speak = False
         lock = threading.Lock()
@@ -36,7 +36,7 @@ class Speaker:
         try:
             self.pool.apply_async(lambda: self._speak(text), ())
             self.pool.close()
-            
+
             self.pool = ThreadPool(1)
         except Exception as e:
             print(e)
