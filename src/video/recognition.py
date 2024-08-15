@@ -5,11 +5,11 @@ import cv2
 import torch
 import numpy as np
 
-from typings.draw import Border, Text
-from video.exceptions import VideoIsNotRecognizedException, ScreenshotNotTokeException
-from video.utils.frame import FrameUtils
-from audio.audio import Speaker
-from typings.points import Point
+from src.typings.draw import Border, Text
+from src.video.exceptions import VideoIsNotRecognizedException, ScreenshotNotTokeException
+from src.video.utils.frame import FrameUtils
+from src.audio.audio import Speaker
+from src.typings.points import Point
 
 
 @dataclasses.dataclass
@@ -72,7 +72,7 @@ class Recognition:
 
     def run(self):
         last_time_spoken = time.time() - 2
-        distancia_antiga = -1
+        old_distance = -1
 
         while True:
             has_could_take_screenshot, frame = self._get_video_frame()
@@ -101,26 +101,25 @@ class Recognition:
 
                 print(distance_of_object)
                     
-                if distance_of_object and abs(distancia_antiga - distance_of_object) > 0.5 and has_person_detected:
+                if distance_of_object and abs(old_distance - distance_of_object) > 0.5 and has_person_detected:
                     current_time = time.time()
                     current_time_spoken = current_time - last_time_spoken
                     if current_time_spoken >= 2:
-                        print("Data")
                         self.speaker.speak(distance_of_object_text)
                         last_time_spoken = current_time_spoken
-                        distancia_antiga = distance_of_object
-
-                points_to_draw = list(
-                    map(
-                        lambda point: (
-                            int(point[0]),
-                            int(point[1]),
-                        ),
-                        [(x1, y1), (x2, y2)]
-                    )
-                )
-
-                self._draw_boxes(frame, distance_of_object_text, points_to_draw)
+                        old_distance = distance_of_object
+                    has_person_detected = False
+            # points_to_draw = list(
+            #     map(
+            #         lambda point: (
+            #             int(point[0]),
+            #             int(point[1]),
+            #         ),
+            #         [(x1, y1), (x2, y2)]
+            #     )
+            # )
+            #
+            # self._draw_boxes(frame, distance_of_object_text, points_to_draw)
             if not has_person_detected:
                 last_time_spoken = time.time() - 2
 
