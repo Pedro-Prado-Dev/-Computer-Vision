@@ -107,7 +107,7 @@ class Recognition:
                             print(f"OLD DISTANCE = {old_distance:.2f} - {label}")
                             old_distance = distance_of_object
 
-                            print(f"NEW DISTANCE = {distance_of_object:.2f} - {label}")
+                        print(f"NEW DISTANCE = {distance_of_object:.2f} - {label}")
 
                     else:
                         last_time_spoken = time.time() - 2

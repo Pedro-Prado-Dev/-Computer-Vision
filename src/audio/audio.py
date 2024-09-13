@@ -13,9 +13,6 @@ class Speaker:
         self.ENGINE = pyttsx3.init()
         self.voices = self.ENGINE.getProperty('voices')
         self.ENGINE.setProperty('voice', self.voices[1].id)
-        # self.thread_id = threading.Thread(target=lambda: self._speak(text))
-        # self.thread_id.start()
-
         self.pool = ThreadPool(1)
 
     def _speak(self, text: str):
@@ -40,5 +37,4 @@ class Speaker:
             self.pool = ThreadPool(1)
         except Exception as e:
             print(e)
-            print("LIGEIRINHO E DATA = NONE, START_DATA, OPEN_DATA")
         
